@@ -235,7 +235,6 @@ public class NodeManagementService implements INodeManagementService {
         NetworkNodeStatus firstEventNodeStatus = request.getFirstEventNodeStatus();
         Instant pairRequestStartTime = request.getStartTime();
         Instant pairRequestEndTime = request.getEndTime();
-        Instant pairEndTime = pairRequestEndTime;
 
         try {
             synchronized (addLockToLockMap(nodeHash)) {
@@ -252,10 +251,11 @@ public class NodeManagementService implements INodeManagementService {
                 }
                 validatePairEventAddRequest(request, nowInstant, networkRecordBeforePair, networkRecordAfterPair);
 
-                NodeNetworkDataRecord newPairStartNodeNetworkDataRecord = addNodeNetworkDataRecordForPairNodeEvent(nodeHash, nodeType, pairRequestStartTime, networkRecordBeforePair, firstEventNodeStatus, false);
+                NodeNetworkDataRecord newPairStartNodeNetworkDataRecord = addNodeNetworkDataRecordForPairNodeEvent(nodeHash, nodeType, pairRequestStartTime, networkRecordBeforePair, firstEventNodeStatus);
 
                 NetworkNodeStatus secondEventNodeStatus = firstEventNodeStatus == NetworkNodeStatus.ACTIVE ? NetworkNodeStatus.INACTIVE : NetworkNodeStatus.ACTIVE;
-                NodeNetworkDataRecord newPairEndNodeNetworkDataRecord = addNodeNetworkDataRecordForPairNodeEvent(nodeHash, nodeType, pairRequestEndTime, newPairStartNodeNetworkDataRecord, secondEventNodeStatus, true);
+                NodeNetworkDataRecord newPairEndNodeNetworkDataRecord = addNodeNetworkDataRecordForPairNodeEvent(nodeHash, nodeType, pairRequestEndTime, newPairStartNodeNetworkDataRecord, secondEventNodeStatus);
+
 
                 if (networkRecordAfterPair != null) {
                     networkRecordAfterPair.setStatusChainRef(networkHistoryService.getReferenceToRecord(newPairEndNodeNetworkDataRecord));
@@ -280,13 +280,9 @@ public class NodeManagementService implements INodeManagementService {
     }
 
     private NodeNetworkDataRecord addNodeNetworkDataRecordForPairNodeEvent(Hash nodeHash, NodeType nodeType, Instant eventRecordTime,
-                                                                           NodeNetworkDataRecord previousNodeNetworkDataRecord, NetworkNodeStatus eventNodeStatus, boolean asFirst) {
-        LocalDate localDate = eventRecordTime.atZone(ZoneId.of("UTC")).toLocalDate();
+                                                                           NodeNetworkDataRecord previousNodeNetworkDataRecord, NetworkNodeStatus eventNodeStatus) {
         NodeNetworkDataRecord newNodeNetworkDataRecord = createManualNodeNetworkDataRecord(nodeHash, nodeType, eventNodeStatus, eventRecordTime);
         newNodeNetworkDataRecord.setStatusChainRef(networkHistoryService.getReferenceToRecord(previousNodeNetworkDataRecord));
-        NodeHistoryData nodeHistoryData = getOrCreateNodeHistoryData(nodeHash, localDate);
-        nodeHistoryData.setNodeNetworkDataRecordMap(reCreateLinkedMapNodeNetworkDataRecord(nodeHistoryData.getNodeNetworkDataRecordMap(), newNodeNetworkDataRecord, asFirst));
-        nodeHistory.put(nodeHistoryData);
         return newNodeNetworkDataRecord;
     }
 
