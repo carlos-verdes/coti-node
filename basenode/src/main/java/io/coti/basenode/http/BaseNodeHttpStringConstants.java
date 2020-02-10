@@ -40,7 +40,8 @@ public class BaseNodeHttpStringConstants {
     public static final String INVALID_NODE_REGISTRAR = "Invalid node registrar";
     public static final String INVALID_NODE_IP_VERSION = "Invalid node IP version";
     public static final String INVALID_NODE_SERVER_URL = "Invalid node server URL";
-    public static final String INVALID_NODE_SERVER_URL_UNKNOWN_HOST = "Unknown host for node server url";
+    public static final String INVALID_NODE_SERVER_URL_UNKNOWN_HOST = "Invalid node server URL %s: unknown host. Dns record not found";
+    public static final String INVALID_NODE_SERVER_URL_EMPTY_HOST = "Invalid node server URL %s: empty host";
     public static final String INVALID_NODE_SERVER_URL_HOST_RESERVED = "Invalid node server URL %s: host %s reserved to another user";
     public static final String INVALID_NODE_SERVER_URL_SSL_REQUIRED = "Invalid node server URL %s: SSL required";
     public static final String INVALID_NODE_IP_FOR_SERVER_URL = "Invalid node server URL %s: host %s is not matching with ip %s. The expected ip is %s";

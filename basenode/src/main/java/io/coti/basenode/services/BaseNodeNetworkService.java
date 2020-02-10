@@ -217,11 +217,14 @@ public class BaseNodeNetworkService implements INetworkService {
             throw new NetworkNodeValidationException(String.format(INVALID_NODE_SERVER_URL_SSL_REQUIRED, webServerUrl));
         }
         String host = getHost(webServerUrl);
+        if (host.isEmpty()) {
+            throw new NetworkNodeValidationException(String.format(INVALID_NODE_SERVER_URL_EMPTY_HOST, webServerUrl));
+        }
         InetAddress inetAddress;
         try {
             inetAddress = Inet4Address.getByName(host);
         } catch (Exception e) {
-            throw new NetworkNodeValidationException(INVALID_NODE_SERVER_URL_UNKNOWN_HOST, e);
+            throw new NetworkNodeValidationException(String.format(INVALID_NODE_SERVER_URL_UNKNOWN_HOST, webServerUrl), e);
         }
         String expectedIp = inetAddress.getHostAddress();
         if (!expectedIp.equals(ip)) {
